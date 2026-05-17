@@ -1670,6 +1670,15 @@ body::before {
 </main>
 
 <script>
+// ========== ELEMENT REFS (declared first so every init block can use them) ==========
+const welcome    = document.getElementById('welcome');
+const enterBtn   = document.getElementById('enterBtn');
+const musicBtn   = document.getElementById('musicBtn');
+const musicLabel = musicBtn.querySelector('.music-label');
+const audio      = document.getElementById('songAudio');
+const lyricEl    = document.getElementById('lyric');
+audio.volume = 0.75;
+
 // ========== BOUQUET DANCE (audio-reactive, with gentle fallback sway) ==========
 // Collect every flower group and remember its base SVG transform — we append
 // an extra rotate()/scale() each frame instead of replacing the attribute.
@@ -1768,7 +1777,6 @@ const lyrics = [
   { t:178.0, text: 'bas tumhari' },
 ];
 
-const lyricEl = document.getElementById('lyric');
 let lastLyricIdx = -2;
 const LYRIC_HOLD = 7; // seconds a line stays visible after it triggers
 
@@ -1844,16 +1852,7 @@ for (let i = 0; i < petalCount; i++) {
   document.body.appendChild(p);
 }
 
-// ========== WELCOME ==========
-const welcome = document.getElementById('welcome');
-const enterBtn = document.getElementById('enterBtn');
-
 // ========== SONG PLAYBACK ==========
-const musicBtn = document.getElementById('musicBtn');
-const musicLabel = musicBtn.querySelector('.music-label');
-const audio = document.getElementById('songAudio');
-audio.volume = 0.75;
-
 // Mobile (iOS especially) requires audio.play() to be called SYNCHRONOUSLY
 // inside the user-gesture handler. Don't await canplay first — just call
 // play() and let the browser queue playback once it has enough data.
