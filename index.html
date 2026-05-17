@@ -366,35 +366,62 @@ body::before {
 
 .music-label { position: relative; z-index: 1; }
 
-/* ===== Karaoke-style lyric line next to the music button ===== */
+/* ===== Karaoke lyric line next to the music button ===== */
 .lyric-display {
-  max-width: 22rem;
+  --glow: 0;
+  max-width: 26rem;
   font-family: 'Fraunces', serif;
   font-style: italic;
-  font-size: 0.95rem;
+  font-size: 1rem;
   color: var(--rose-deep);
   opacity: 0;
-  transform: translateY(4px);
-  transition: opacity 0.55s ease, transform 0.55s ease;
+  transform: translateY(6px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   pointer-events: none;
-  text-shadow: 0 1px 0 rgba(255,255,255,0.6);
   letter-spacing: 0.005em;
+  text-shadow:
+    0 1px 0 rgba(255,255,255,0.55),
+    0 0 calc(8px + var(--glow) * 22px) rgba(216,143,166, calc(0.15 + var(--glow) * 0.5));
 }
-.lyric-display.visible {
-  opacity: 0.92;
-  transform: translateY(0);
-}
+.lyric-display.visible { opacity: 0.95; transform: translateY(0); }
 .lyric-display::before {
-  content: '♪ ';
+  content: '♪';
   color: var(--gold);
   font-style: normal;
-  margin-right: 0.25rem;
+  margin-right: 0.45rem;
+  display: inline-block;
+  animation: lyricNote 1.6s ease-in-out infinite;
 }
-@media (max-width: 900px) { .lyric-display { max-width: 14rem; font-size: 0.82rem; } }
-@media (max-width: 600px) { .lyric-display { max-width: 9rem;  font-size: 0.7rem; } }
+@keyframes lyricNote {
+  0%, 100% { transform: translateY(0)   rotate(-4deg); opacity: 0.8; }
+  50%      { transform: translateY(-2px) rotate( 6deg); opacity: 1;   }
+}
+
+/* Per-word reveal */
+.lyric-display .lw {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(8px);
+  filter: blur(2px);
+  animation: lwReveal 0.55s cubic-bezier(0.34, 1.4, 0.64, 1) forwards;
+}
+@keyframes lwReveal {
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+
+/* Mood variants — color/weight by line type */
+.lyric-display.mood-punjabi { color: var(--gold-deep); font-weight: 500; }
+.lyric-display.mood-punjabi { text-shadow:
+    0 1px 0 rgba(255,255,255,0.55),
+    0 0 calc(8px + var(--glow) * 22px) rgba(201,168,120, calc(0.2 + var(--glow) * 0.55)); }
+.lyric-display.mood-hook    { color: var(--rose-deep); font-weight: 500; letter-spacing: 0.04em; }
+.lyric-display.mood-instr   { color: var(--ink-soft); opacity: 0.7; font-size: 0.85rem; }
+
+@media (max-width: 900px) { .lyric-display { max-width: 16rem; font-size: 0.85rem; } }
+@media (max-width: 600px) { .lyric-display { max-width: 10rem; font-size: 0.72rem; } }
 @media (max-width: 360px) { .lyric-display { display: none; } }
 
 /* ============== HERO ============== */
@@ -1751,59 +1778,120 @@ function tick() {
       `${f.base} rotate(${(idle + beat).toFixed(2)}) scale(${scale.toFixed(3)})`
     );
   }
+  // Beat-driven glow on the lyric text — bass drives the shadow intensity
+  if (lyricEl) lyricEl.style.setProperty('--glow', bassS.toFixed(3));
   requestAnimationFrame(tick);
 }
 if (!prefersReduced) requestAnimationFrame(tick);
 
-// ========== LYRICS (karaoke-style next to the music button) ==========
-// Each entry: { t: seconds-into-song, text: '...' }. Edit this array to
-// match your copy of the track — timestamps below are approximate.
+// ========== LYRICS ENGINE ==========
+// Each entry: { t, text, mood?, end? }
+//   t     = start time (seconds into the song)
+//   text  = the line to display (≤ ~6 short words reads best)
+//   mood  = 'eng' (default) | 'punjabi' | 'hook' | 'instr'
+//   end   = optional explicit fade-out time; defaults to next entry's t - 0.4s
+//
+// Edit this array to fit your copy of the track. Below is just the
+// scaffolding: timestamps mark each structural section of the song with
+// the publicly-known hooks already in place. Paste your own line text
+// into the placeholder slots and tweak `t` until it lines up with what
+// you hear (use the keyboard arrows to scrub while editing).
 const lyrics = [
-  { t:  0.0, text: '' },
-  { t:  6.0, text: '✦  Sapphire  ✦' },
-  { t: 14.0, text: 'The lights, your face, your eyes…' },
-  { t: 22.0, text: 'shining like every star I see' },
-  { t: 32.0, text: 'Cham cham chamke sitare wargi' },
-  { t: 40.0, text: '…just like a sapphire' },
-  { t: 50.0, text: 'meri jaan, tum ho roshni' },
-  { t: 62.0, text: 'In the city lights, you glow' },
-  { t: 74.0, text: 'Cham cham chamke sitare wargi' },
-  { t: 84.0, text: 'forever yours, my sapphire' },
-  { t: 98.0, text: '✦  for Isha  ✦' },
-  { t:115.0, text: 'tumhari muskaan, mera sukoon' },
-  { t:130.0, text: 'Cham cham chamke sitare wargi' },
-  { t:142.0, text: '…you are my sapphire' },
-  { t:160.0, text: 'sirf ek hi muskaan chahiye' },
-  { t:178.0, text: 'bas tumhari' },
+  // --- intro / verse 1 ---
+  { t:   2, mood: 'instr', text: '✦  Sapphire  ✦' },
+  { t:  14, text: '…' },          // ← paste line
+  { t:  20, text: '…' },          // ← paste line
+  { t:  26, text: '…' },          // ← paste line
+  { t:  32, text: '…' },          // ← paste line
+  // --- pre-chorus ---
+  { t:  38, text: '…' },          // ← paste line
+  { t:  43, text: '…' },          // ← paste line
+  { t:  48, mood: 'hook', text: 'Sapphire' },
+  // --- chorus 1 ---
+  { t:  52, text: '…' },          // ← paste line
+  { t:  56, text: '…' },          // ← paste line
+  { t:  60, text: '…' },          // ← paste line
+  { t:  64, text: '…' },          // ← paste line
+  { t:  68, mood: 'punjabi', text: 'Cham cham chamke sitare vargi' },
+  { t:  73, mood: 'hook',    text: '(Sapphire)' },
+  // --- chorus repeat ---
+  { t:  77, text: '…' },          // ← paste line
+  { t:  81, text: '…' },          // ← paste line
+  { t:  85, text: '…' },          // ← paste line
+  { t:  89, mood: 'punjabi', text: 'Cham cham chamke sitare vargi' },
+  // --- verse 2 ---
+  { t:  96, text: '…' },          // ← paste line
+  { t: 104, text: '…' },          // ← paste line
+  { t: 112, text: '…' },          // ← paste line
+  { t: 120, text: '…' },          // ← paste line
+  // --- pre-chorus + chorus 2 ---
+  { t: 128, text: '…' },          // ← paste line
+  { t: 134, mood: 'hook', text: 'Sapphire' },
+  { t: 140, text: '…' },          // ← paste line
+  { t: 148, mood: 'punjabi', text: 'Cham cham chamke sitare vargi' },
+  { t: 156, text: '…' },          // ← paste line
+  { t: 164, mood: 'punjabi', text: 'Cham cham chamke sitare vargi' },
+  // --- Punjabi bridge (Arijit Singh) ---
+  { t: 172, mood: 'instr', text: '— Arijit Singh —' },
+  { t: 178, mood: 'punjabi', text: '…' }, // ← paste line
+  { t: 184, mood: 'punjabi', text: '…' }, // ← paste line
+  { t: 190, mood: 'punjabi', text: '…' }, // ← paste line
+  { t: 196, mood: 'punjabi', text: '…' }, // ← paste line
+  { t: 202, mood: 'hook',    text: 'Sapphire' },
+  { t: 208, mood: 'punjabi', text: 'Cham cham chamke sitare vargi' },
+  // --- final choruses ---
+  { t: 216, text: '…' },          // ← paste line
+  { t: 222, mood: 'punjabi', text: 'Cham cham chamke sitare vargi' },
+  { t: 230, text: '…' },          // ← paste line
+  { t: 236, mood: 'punjabi', text: 'Cham cham chamke sitare vargi' },
+  // --- outro pre-chorus ---
+  { t: 244, text: '…' },          // ← paste line
+  { t: 250, text: '…' },          // ← paste line
+  { t: 256, mood: 'hook', text: 'Sapphire' },
 ];
 
-let lastLyricIdx = -2;
-const LYRIC_HOLD = 7; // seconds a line stays visible after it triggers
+// Sort + precompute fade-out times so transitions are clean.
+lyrics.sort((a, b) => a.t - b.t);
+for (let i = 0; i < lyrics.length; i++) {
+  const next = lyrics[i + 1];
+  lyrics[i].endT = lyrics[i].end ?? (next ? next.t - 0.4 : lyrics[i].t + 6);
+}
+
+let activeLyricIdx = -2;
+function showLyric(entry) {
+  lyricEl.className = 'lyric-display mood-' + (entry.mood || 'eng');
+  lyricEl.innerHTML = '';
+  // word-by-word reveal — each word fades + slides in
+  const words = String(entry.text).split(/(\s+)/);
+  let wi = 0;
+  for (const w of words) {
+    if (!w.trim()) { lyricEl.appendChild(document.createTextNode(w)); continue; }
+    const span = document.createElement('span');
+    span.className = 'lw';
+    span.textContent = w;
+    span.style.animationDelay = (wi++ * 0.07) + 's';
+    lyricEl.appendChild(span);
+  }
+  // next frame to let the new content settle, then trigger the fade-in
+  requestAnimationFrame(() => lyricEl.classList.add('visible'));
+}
+function hideLyric() { lyricEl.classList.remove('visible'); }
 
 function updateLyric() {
   if (!lyricEl) return;
   const t = audio.currentTime;
+  // active entry: largest i with lyrics[i].t <= t < lyrics[i].endT
   let idx = -1;
-  for (let i = lyrics.length - 1; i >= 0; i--) {
-    if (lyrics[i].t <= t) { idx = i; break; }
+  for (let i = 0; i < lyrics.length; i++) {
+    if (lyrics[i].t <= t && t < lyrics[i].endT) { idx = i; break; }
   }
-  if (idx !== lastLyricIdx) {
-    lastLyricIdx = idx;
-    const line = (idx >= 0 ? lyrics[idx].text : '').trim();
-    if (line) {
-      lyricEl.classList.remove('visible');
-      // small reflow so the fade restarts cleanly when text changes
-      void lyricEl.offsetWidth;
-      lyricEl.textContent = line;
-      lyricEl.classList.add('visible');
-    } else {
-      lyricEl.classList.remove('visible');
-    }
-  } else if (idx >= 0 && t - lyrics[idx].t > LYRIC_HOLD) {
-    lyricEl.classList.remove('visible');
-  }
+  if (idx === activeLyricIdx) return;
+  activeLyricIdx = idx;
+  if (idx >= 0 && String(lyrics[idx].text).trim()) showLyric(lyrics[idx]);
+  else hideLyric();
 }
 audio.addEventListener('timeupdate', updateLyric);
+audio.addEventListener('seeking',   () => { activeLyricIdx = -2; updateLyric(); });
 audio.addEventListener('pause', () => lyricEl && lyricEl.classList.remove('visible'));
 
 // ========== WELCOME GLITTER RAIN ==========
