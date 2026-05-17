@@ -375,35 +375,6 @@ body::before {
   filter: drop-shadow(0 18px 30px rgba(58,31,43,0.22));
 }
 
-.hero-art .lily-bloom {
-  transform-origin: center bottom;
-  transform-box: fill-box;
-  animation: bloomSway 6.5s ease-in-out infinite;
-}
-
-/* Stagger the bloom sway so the bouquet feels alive, not metronomic */
-.hero-art .lily-bloom:nth-child(3n)   { animation-duration: 7.4s; animation-delay: -1.2s; }
-.hero-art .lily-bloom:nth-child(3n+1) { animation-duration: 5.8s; animation-delay: -2.6s; }
-.hero-art .lily-bloom:nth-child(3n+2) { animation-duration: 8.1s; animation-delay: -0.7s; }
-.hero-art .lily-bloom:nth-child(5n)   { animation-duration: 6.9s; animation-delay: -3.4s; }
-.hero-art .lily-bloom:nth-child(7n)   { animation-duration: 9.2s; animation-delay: -4.1s; }
-
-.hero-art .greenery use,
-.hero-art .filler use {
-  transform-origin: center bottom;
-  transform-box: fill-box;
-  animation: leafSway 7s ease-in-out infinite;
-}
-.hero-art .greenery use:nth-child(odd)  { animation-duration: 8.2s; animation-delay: -1.5s; }
-.hero-art .greenery use:nth-child(even) { animation-duration: 6.4s; animation-delay: -3s; }
-.hero-art .filler use:nth-child(odd)    { animation-duration: 5.6s; animation-delay: -2.1s; }
-
-.hero-art .ribbon {
-  transform-origin: 200px 395px;
-  transform-box: view-box;
-  animation: ribbonFlutter 5.5s ease-in-out infinite;
-}
-
 .hero-art {
   animation: bloomIn 1.8s cubic-bezier(0.34, 1.2, 0.64, 1), heroFloat 9s ease-in-out 1.8s infinite;
 }
@@ -418,27 +389,8 @@ body::before {
   50%      { transform: translateY(-6px) rotate(0.3deg); }
 }
 
-@keyframes bloomSway {
-  0%, 100% { transform: rotate(-2.4deg) scale(1); }
-  50%      { transform: rotate( 2.4deg) scale(1.04); }
-}
-
-@keyframes leafSway {
-  0%, 100% { transform: rotate(-1.6deg); }
-  50%      { transform: rotate( 1.8deg); }
-}
-
-@keyframes ribbonFlutter {
-  0%, 100% { transform: rotate(-1deg) skewX(-1deg); }
-  50%      { transform: rotate( 1deg) skewX( 1deg); }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .hero-art,
-  .hero-art .lily-bloom,
-  .hero-art .greenery use,
-  .hero-art .filler use,
-  .hero-art .ribbon { animation: none !important; }
+  .hero-art { animation: none !important; }
 }
 
 .hero-text {
@@ -1645,6 +1597,33 @@ body::before {
 </main>
 
 <script>
+// ========== BOUQUET SWAY (SMIL, won't override SVG transform attributes) ==========
+(function animateBouquet() {
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (prefersReduced) return;
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const addSway = (el, opts) => {
+    const at = document.createElementNS(svgNS, 'animateTransform');
+    at.setAttribute('attributeName', 'transform');
+    at.setAttribute('type', 'rotate');
+    const a = opts.angle;
+    // Rotate around local origin (0,0) — for blooms this is the base of the flower
+    at.setAttribute('values', `-${a} 0 0; ${a} 0 0; -${a} 0 0`);
+    at.setAttribute('dur', opts.dur + 's');
+    at.setAttribute('repeatCount', 'indefinite');
+    at.setAttribute('additive', 'sum');
+    at.setAttribute('begin', opts.begin + 's');
+    el.appendChild(at);
+  };
+  document.querySelectorAll('.hero-art .lily-bloom').forEach((bloom) => {
+    addSway(bloom, {
+      angle: 1.6 + Math.random() * 1.6,
+      dur:   5   + Math.random() * 4,
+      begin: -Math.random() * 5,
+    });
+  });
+})();
+
 // ========== FLOATING PETALS ==========
 const isMobile = window.innerWidth < 600;
 const petalCount = isMobile ? 12 : 22;
