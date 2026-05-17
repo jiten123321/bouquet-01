@@ -99,6 +99,49 @@ body::before {
 
 .welcome.hidden { opacity: 0; visibility: hidden; }
 
+/* ===== GLITTER RAIN ===== */
+.glitter {
+  position: absolute;
+  top: -2vh;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+  will-change: transform, opacity;
+  animation: glitterFall linear infinite, glitterTwinkle ease-in-out infinite;
+}
+/* sparkle cross for the larger ones */
+.glitter.spark {
+  border-radius: 0;
+  background: transparent !important;
+}
+.glitter.spark::before,
+.glitter.spark::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  background: linear-gradient(var(--g, #FFE9A0), transparent 70%, var(--g, #FFE9A0));
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+}
+.glitter.spark::before { width: 1.2px; height: 220%; box-shadow: 0 0 6px var(--g, #FFE9A0); }
+.glitter.spark::after  { width: 220%; height: 1.2px; box-shadow: 0 0 6px var(--g, #FFE9A0); }
+
+@keyframes glitterFall {
+  0%   { transform: translate3d(0, -8vh, 0) rotate(0deg); }
+  100% { transform: translate3d(var(--drift, 20px), 110vh, 0) rotate(720deg); }
+}
+@keyframes glitterTwinkle {
+  0%, 100% { opacity: 0.15; }
+  35%      { opacity: 1; }
+  60%      { opacity: 0.4; }
+}
+
+.welcome.hidden .glitter { animation: none; opacity: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .glitter { animation: none; opacity: 0.5; }
+}
+
 .welcome-inner {
   position: relative;
   z-index: 2;
@@ -1754,6 +1797,34 @@ function updateLyric() {
 }
 audio.addEventListener('timeupdate', updateLyric);
 audio.addEventListener('pause', () => lyricEl && lyricEl.classList.remove('visible'));
+
+// ========== WELCOME GLITTER RAIN ==========
+(function spawnGlitter() {
+  const host = document.getElementById('welcome');
+  if (!host) return;
+  const small  = window.innerWidth < 600;
+  const count  = small ? 50 : 90;
+  const colors = ['#FFE9A0', '#FFF5C8', '#FFD78A', '#F5D4D9', '#FFFAF0', '#C9A878'];
+  for (let i = 0; i < count; i++) {
+    const g = document.createElement('div');
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    const size  = 1.4 + Math.random() * 3.4;
+    const isSpark = Math.random() < 0.22 && size > 2.5;
+    g.className = 'glitter' + (isSpark ? ' spark' : '');
+    g.style.left   = (Math.random() * 100) + 'vw';
+    g.style.width  = size + 'px';
+    g.style.height = size + 'px';
+    g.style.background = color;
+    g.style.setProperty('--g', color);
+    g.style.setProperty('--drift', (Math.random() * 80 - 40) + 'px');
+    g.style.boxShadow = `0 0 ${Math.round(size * 2)}px ${Math.round(size * 0.5)}px ${color}aa`;
+    const fall = 5 + Math.random() * 7;
+    const tw   = 1 + Math.random() * 2.4;
+    g.style.animationDuration = `${fall}s, ${tw}s`;
+    g.style.animationDelay    = `${-Math.random() * fall}s, ${-Math.random() * tw}s`;
+    host.appendChild(g);
+  }
+})();
 
 // ========== FLOATING PETALS ==========
 const isMobile = window.innerWidth < 600;
