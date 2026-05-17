@@ -1,0 +1,1643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For Isha · kuch khaas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+<style>
+:root {
+  --bg: #F5EBE0;
+  --bg-deep: #EDDCD2;
+  --ink: #3A1F2B;
+  --ink-soft: #6B4C5A;
+  --rose: #D88FA6;
+  --rose-deep: #B86C82;
+  --gold: #C9A878;
+  --gold-deep: #8B6B3F;
+  --sage: #A4B89F;
+  --cream: #FFF8F0;
+  --blush: #F5D4D9;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100vh;
+  height: 100dvh;
+  width: 100vw;
+  overflow: hidden;
+  font-family: 'Cormorant Garamond', serif;
+  color: var(--ink);
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background:
+    radial-gradient(ellipse at 15% 10%, #FAEAD8 0%, transparent 45%),
+    radial-gradient(ellipse at 85% 90%, #F5D4D9 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, #FBF1E4 0%, transparent 60%),
+    linear-gradient(135deg, var(--bg) 0%, var(--bg-deep) 100%);
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+  opacity: 0.18;
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: multiply;
+}
+
+.petal {
+  position: fixed;
+  pointer-events: none;
+  animation: fall linear infinite;
+  z-index: 2;
+  border-radius: 50% 0 50% 50%;
+  filter: blur(0.3px);
+}
+
+@keyframes fall {
+  0% { transform: translateY(-10vh) translateX(0) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.55; }
+  50% { transform: translateY(50vh) translateX(40px) rotate(360deg); }
+  90% { opacity: 0.55; }
+  100% { transform: translateY(110vh) translateX(-30px) rotate(720deg); opacity: 0; }
+}
+
+/* ============== WELCOME OVERLAY ============== */
+.welcome {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, #4A2438 0%, #2A1520 70%, #1A0D14 100%);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--cream);
+  transition: opacity 1.4s ease, visibility 1.4s ease;
+  padding: 2rem;
+}
+
+.welcome::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.7'/%3E%3C/svg%3E");
+  opacity: 0.12;
+  mix-blend-mode: screen;
+}
+
+.welcome.hidden { opacity: 0; visibility: hidden; }
+
+.welcome-inner {
+  position: relative;
+  z-index: 2;
+  animation: fadeUp 1.6s ease-out;
+  max-width: 36rem;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.welcome-mark {
+  font-family: 'Fraunces', serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.5em;
+  color: var(--gold);
+  margin-bottom: 1.8rem;
+  text-transform: uppercase;
+  font-weight: 300;
+}
+
+.welcome-ornament {
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 0 auto 2rem;
+}
+
+.welcome h1 {
+  font-family: 'Fraunces', serif;
+  font-weight: 300;
+  font-size: clamp(2.2rem, 5.5vw, 4rem);
+  line-height: 1.1;
+  margin-bottom: 1.2rem;
+}
+
+.welcome h1 em { font-style: italic; color: var(--rose); font-weight: 400; }
+
+.welcome .sub {
+  font-size: 1.2rem;
+  color: rgba(255,248,240,0.7);
+  margin-bottom: 2.8rem;
+  font-style: italic;
+}
+
+.welcome-btn {
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  padding: 1rem 2.8rem;
+  font-family: 'Fraunces', serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 300;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.welcome-btn:hover { background: var(--gold); color: #2A1520; letter-spacing: 0.45em; }
+
+.welcome-hint {
+  position: absolute;
+  bottom: 2rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(255,248,240,0.35);
+}
+
+/* ============== MAIN ============== */
+.boutique {
+  height: 100vh;
+  height: 100dvh;
+  width: 100vw;
+  padding: 1.4rem 3rem 1.2rem;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 1rem;
+  position: relative;
+  z-index: 5;
+}
+
+/* Top bar */
+.top-bar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  border-bottom: 1px solid rgba(58,31,43,0.15);
+  padding-bottom: 1rem;
+}
+
+.brand { display: flex; align-items: baseline; gap: 0.8rem; }
+
+.brand-mark {
+  font-family: 'Fraunces', serif;
+  font-weight: 400;
+  font-style: italic;
+  font-size: 1.9rem;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+
+.brand-orn { color: var(--rose-deep); font-style: normal; font-size: 0.9em; }
+
+.brand-sub {
+  font-size: 0.65rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  font-family: 'Fraunces', serif;
+}
+
+.top-actions { display: flex; align-items: center; gap: 1.5rem; }
+
+.date-stamp {
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  font-family: 'Fraunces', serif;
+}
+
+.music-toggle {
+  background: transparent;
+  border: 1px solid rgba(58,31,43,0.3);
+  color: var(--ink);
+  padding: 0.5rem 1.2rem;
+  border-radius: 999px;
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  transition: all 0.4s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.music-toggle:hover { background: var(--rose-deep); color: white; border-color: var(--rose-deep); }
+
+.pulse-dot {
+  display: inline-block;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: rgba(58,31,43,0.3);
+  transition: background 0.3s;
+}
+
+.music-toggle.playing .pulse-dot {
+  background: var(--rose-deep);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.music-toggle.playing:hover .pulse-dot { background: var(--cream); }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.3); }
+}
+
+/* ============== HERO ============== */
+.hero {
+  display: grid;
+  grid-template-columns: 0.85fr 1fr;
+  align-items: center;
+  gap: 3rem;
+  padding: 0 1rem;
+  min-height: 0;
+}
+
+.hero-art-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 0;
+}
+
+.hero-art-wrap::before {
+  content: '';
+  position: absolute;
+  width: 88%;
+  aspect-ratio: 1;
+  max-height: 88%;
+  border: 1px solid rgba(201,168,120,0.35);
+  border-radius: 50%;
+  z-index: 0;
+}
+
+.hero-art-wrap::after {
+  content: '';
+  position: absolute;
+  width: 82%;
+  aspect-ratio: 1;
+  max-height: 82%;
+  background: radial-gradient(ellipse at center, rgba(255,248,240,0.6) 0%, transparent 75%);
+  border-radius: 50%;
+  z-index: 0;
+}
+
+.hero-art {
+  position: relative;
+  z-index: 1;
+  max-height: 100%;
+  max-width: 100%;
+  height: 100%;
+  width: auto;
+  animation: bloomIn 1.8s cubic-bezier(0.34, 1.2, 0.64, 1);
+  filter: drop-shadow(0 18px 30px rgba(58,31,43,0.22));
+}
+
+.hero-art .lily-bloom { transform-origin: center bottom; }
+
+@keyframes bloomIn {
+  from { opacity: 0; transform: scale(0.88) translateY(15px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.hero-text {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  animation: textIn 1.6s ease-out 0.4s both;
+}
+
+@keyframes textIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.hero-mark {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  color: var(--rose-deep);
+  font-family: 'Fraunces', serif;
+}
+
+.hero-mark::after { content: ''; width: 40px; height: 1px; background: var(--rose); }
+
+.hero-message {
+  font-family: 'Fraunces', serif;
+  font-weight: 300;
+  font-size: clamp(1.4rem, 2.6vw, 2.2rem);
+  color: var(--ink);
+  line-height: 1.35;
+  letter-spacing: -0.005em;
+}
+
+.hero-message em { font-style: italic; color: var(--rose-deep); font-weight: 400; }
+
+.hero-message .greeting {
+  display: block;
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--rose-deep);
+  font-size: 0.7em;
+  letter-spacing: 0.02em;
+  margin-bottom: 0.7rem;
+  opacity: 0.95;
+}
+
+.date-stamp.left {
+  position: relative;
+  padding-left: 22px;
+}
+
+.date-stamp.left::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 14px;
+  height: 1px;
+  background: var(--gold);
+}
+
+.tulip {
+  display: inline-block;
+  font-size: 0.85em;
+  animation: sway 4s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes sway {
+  0%, 100% { transform: rotate(-6deg); }
+  50% { transform: rotate(6deg); }
+}
+
+.hero-sub {
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+  font-style: italic;
+  font-family: 'Fraunces', serif;
+  font-weight: 300;
+}
+
+.hero-name {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-top: 0.4rem;
+  font-family: 'Fraunces', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  color: var(--gold-deep);
+}
+
+.hero-name::before { content: ''; width: 40px; height: 1px; background: var(--gold); }
+
+/* ============== FOOTER ============== */
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.9rem;
+  border-top: 1px solid rgba(58,31,43,0.1);
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+}
+
+.footer .heart {
+  color: var(--rose-deep);
+  font-style: normal;
+  display: inline-block;
+  animation: heartbeat 2s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+.footer-right {
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  font-size: 0.65rem;
+  font-style: normal;
+  color: var(--gold-deep);
+}
+
+/* ============== RESPONSIVE ============== */
+
+/* Tablet portrait & smaller */
+@media (max-width: 900px) {
+  .boutique { padding: 1rem 1.4rem; gap: 0.6rem; }
+  .hero {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1fr) auto;
+    gap: 0.5rem;
+    padding: 0;
+  }
+  .hero-text { text-align: center; align-items: center; }
+  .hero-mark::after, .hero-name::before { display: none; }
+  .top-actions .date-stamp { display: none; }
+  .brand-sub { display: none; }
+  .brand-mark { font-size: 1.5rem; }
+  .hero-art-wrap::before { width: 88%; }
+  .hero-art-wrap::after { width: 82%; }
+}
+
+/* Mobile portrait */
+@media (max-width: 600px) {
+  .boutique {
+    padding: 0.7rem 1rem 0.6rem;
+    gap: 0.35rem;
+  }
+  .top-bar { padding-bottom: 0.6rem; }
+  .brand-mark { font-size: 1.3rem; }
+  .brand-orn { font-size: 0.85em; }
+  .top-actions { gap: 0.8rem; }
+  .music-toggle {
+    padding: 0.45rem 0.85rem;
+    font-size: 0.78rem;
+    gap: 0.45rem;
+  }
+  .date-stamp.left {
+    font-size: 0.58rem;
+    letter-spacing: 0.2em;
+    padding-left: 18px;
+  }
+  .date-stamp.left::before { width: 10px; }
+  .hero {
+    gap: 0.3rem;
+    grid-template-rows: minmax(0, 1.4fr) auto;
+  }
+  .hero-art-wrap {
+    max-height: 46vh;
+  }
+  .hero-art-wrap::before, .hero-art-wrap::after { width: 92%; }
+  .hero-art {
+    max-height: 100%;
+    max-width: 82vw;
+    height: auto;
+    width: auto;
+  }
+  .hero-text { gap: 0.55rem; padding: 0 0.2rem; }
+  .hero-mark {
+    font-size: 0.6rem;
+    letter-spacing: 0.35em;
+    gap: 0;
+  }
+  .hero-message {
+    font-size: 1.1rem;
+    line-height: 1.32;
+  }
+  .hero-sub { font-size: 0.82rem; }
+  .hero-name {
+    font-size: 0.58rem;
+    letter-spacing: 0.35em;
+    margin-top: 0.1rem;
+    gap: 0;
+  }
+  .footer {
+    flex-direction: column;
+    gap: 0.25rem;
+    padding-top: 0.55rem;
+    font-size: 0.68rem;
+    text-align: center;
+  }
+  .footer-right { font-size: 0.55rem; letter-spacing: 0.3em; }
+
+  /* Welcome screen on mobile */
+  .welcome { padding: 1.5rem 1.2rem; }
+  .welcome-mark { font-size: 0.62rem; letter-spacing: 0.4em; margin-bottom: 1.2rem; }
+  .welcome-ornament { margin-bottom: 1.4rem; }
+  .welcome h1 { font-size: 2rem; margin-bottom: 1rem; }
+  .welcome .sub { font-size: 1rem; margin-bottom: 2rem; }
+  .welcome-btn {
+    padding: 0.95rem 2.2rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.3em;
+  }
+  .welcome-hint {
+    bottom: 1.2rem;
+    font-size: 0.58rem;
+    letter-spacing: 0.25em;
+    padding: 0 1.5rem;
+  }
+}
+
+/* Tiny phones (iPhone SE etc.) */
+@media (max-width: 360px) {
+  .music-toggle { padding: 0.4rem 0.7rem; font-size: 0.72rem; }
+  .music-label { display: none; }
+  .date-stamp.left { font-size: 0.52rem; letter-spacing: 0.18em; padding-left: 14px; }
+  .date-stamp.left::before { width: 8px; }
+  .hero-message { font-size: 0.98rem; }
+  .hero-art-wrap { max-height: 42vh; }
+  .welcome h1 { font-size: 1.7rem; }
+  .welcome .sub { font-size: 0.9rem; }
+}
+
+/* Landscape phones: keep two-column compact instead of stacking */
+@media (max-width: 900px) and (max-height: 500px) and (orientation: landscape) {
+  .boutique { padding: 0.5rem 1.2rem 0.4rem; gap: 0.3rem; }
+  .top-bar { padding-bottom: 0.45rem; }
+  .brand-mark { font-size: 1.2rem; }
+  .hero {
+    grid-template-columns: 0.85fr 1fr;
+    grid-template-rows: 1fr;
+    gap: 1rem;
+    padding: 0;
+  }
+  .hero-text { text-align: left; align-items: flex-start; gap: 0.4rem; }
+  .hero-mark::after, .hero-name::before {
+    display: inline-block;
+    width: 25px;
+    height: 1px;
+  }
+  .hero-art-wrap { max-height: none; }
+  .hero-art { max-width: 100%; max-height: 100%; width: auto; height: 100%; }
+  .hero-message { font-size: 1rem; line-height: 1.3; }
+  .hero-sub { font-size: 0.72rem; }
+  .hero-name { font-size: 0.55rem; margin-top: 0; }
+  .footer {
+    flex-direction: row;
+    padding-top: 0.35rem;
+    font-size: 0.62rem;
+    gap: 0;
+  }
+  .footer-right { display: inline; font-size: 0.52rem; }
+
+  /* Welcome landscape */
+  .welcome { padding: 1rem; }
+  .welcome h1 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+  .welcome .sub { font-size: 0.8rem; margin-bottom: 1rem; }
+  .welcome-mark { margin-bottom: 0.6rem; font-size: 0.55rem; }
+  .welcome-ornament { margin-bottom: 0.6rem; }
+  .welcome-btn { padding: 0.65rem 1.7rem; font-size: 0.65rem; }
+  .welcome-hint { display: none; }
+}
+
+/* Short desktop screens */
+@media (max-height: 700px) and (min-width: 901px) {
+  .boutique { padding: 0.8rem 2rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============== WELCOME OVERLAY ============== -->
+<div class="welcome" id="welcome">
+  <div class="welcome-inner">
+    <div class="welcome-mark">— kuch khaas —</div>
+    <div class="welcome-ornament"></div>
+    <h1>Hello, <em>Isha</em><br>kuch khaas hai aaj...</h1>
+    <p class="sub">Yeh choti si jagah, sirf tumhare naam.</p>
+    <button class="welcome-btn" id="enterBtn">Step Inside</button>
+  </div>
+  <div class="welcome-hint">tap to step inside ✿ music begins inside</div>
+</div>
+
+<!-- ============== MAIN ============== -->
+<main class="boutique">
+
+  <header class="top-bar">
+    <div class="top-actions">
+      <button class="music-toggle" id="musicBtn">
+        <span class="pulse-dot"></span>
+        <span class="music-label">play ambient</span>
+      </button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-art-wrap">
+      <!-- ============== HAND-ILLUSTRATED LILY BOUQUET ============== -->
+      <svg class="hero-art" viewBox="0 0 400 480" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <!-- ===== PETAL GRADIENTS ===== -->
+          <!-- Standard cream-white -->
+          <radialGradient id="petalGrad" cx="50%" cy="92%" r="78%" fx="50%" fy="100%">
+            <stop offset="0%" stop-color="#FFF8E8"/>
+            <stop offset="20%" stop-color="#FFFAF0"/>
+            <stop offset="55%" stop-color="#FAF1E0"/>
+            <stop offset="85%" stop-color="#E8D8C0"/>
+            <stop offset="100%" stop-color="#D5C0A5"/>
+          </radialGradient>
+
+          <!-- Slightly pink variant for blush lilies -->
+          <radialGradient id="petalGradB" cx="50%" cy="92%" r="78%" fx="50%" fy="100%">
+            <stop offset="0%" stop-color="#FFFAF0"/>
+            <stop offset="35%" stop-color="#FDF0E5"/>
+            <stop offset="70%" stop-color="#F5DCD0"/>
+            <stop offset="100%" stop-color="#E0B8B0"/>
+          </radialGradient>
+
+          <!-- Yellow throat at petal base -->
+          <radialGradient id="petalThroat" cx="50%" cy="100%" r="35%">
+            <stop offset="0%" stop-color="#FFE0A0" stop-opacity="0.85"/>
+            <stop offset="60%" stop-color="#FFE8B5" stop-opacity="0.4"/>
+            <stop offset="100%" stop-color="#FFE8B5" stop-opacity="0"/>
+          </radialGradient>
+
+          <!-- Pink blush at base -->
+          <radialGradient id="petalBlush" cx="50%" cy="100%" r="40%">
+            <stop offset="0%" stop-color="#F5C8C8" stop-opacity="0.6"/>
+            <stop offset="100%" stop-color="#F5C8C8" stop-opacity="0"/>
+          </radialGradient>
+
+          <!-- Petal highlight -->
+          <linearGradient id="petalHL" x1="50%" y1="0%" x2="50%" y2="100%">
+            <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.85"/>
+            <stop offset="50%" stop-color="#FFFFFF" stop-opacity="0.15"/>
+            <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+          </linearGradient>
+
+          <!-- Anther (orange pollen-laden) -->
+          <radialGradient id="anther" cx="50%" cy="40%" r="55%">
+            <stop offset="0%" stop-color="#FFCC78"/>
+            <stop offset="50%" stop-color="#D89248"/>
+            <stop offset="100%" stop-color="#7A4A20"/>
+          </radialGradient>
+
+          <!-- Pistil green -->
+          <linearGradient id="pistilGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#5A7050"/>
+            <stop offset="100%" stop-color="#A8B89F"/>
+          </linearGradient>
+
+          <!-- Leaf -->
+          <linearGradient id="leafGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#A8C098"/>
+            <stop offset="50%" stop-color="#7A9070"/>
+            <stop offset="100%" stop-color="#5A7050"/>
+          </linearGradient>
+
+          <!-- Eucalyptus leaf -->
+          <radialGradient id="eucLeafGrad" cx="40%" cy="40%" r="60%">
+            <stop offset="0%" stop-color="#C8D5B8"/>
+            <stop offset="60%" stop-color="#A4B89F"/>
+            <stop offset="100%" stop-color="#7A8E70"/>
+          </radialGradient>
+
+          <!-- Bud -->
+          <linearGradient id="budGrad" x1="20%" y1="0%" x2="80%" y2="100%">
+            <stop offset="0%" stop-color="#FAF2DE"/>
+            <stop offset="50%" stop-color="#D5DAB8"/>
+            <stop offset="100%" stop-color="#7A9070"/>
+          </linearGradient>
+
+          <!-- Wrap paper -->
+          <linearGradient id="paperGrad" x1="50%" y1="0%" x2="50%" y2="100%">
+            <stop offset="0%" stop-color="#FEF8EC"/>
+            <stop offset="40%" stop-color="#F5E8D0"/>
+            <stop offset="100%" stop-color="#D0B898"/>
+          </linearGradient>
+
+          <linearGradient id="paperFold" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#C8B098" stop-opacity="0.65"/>
+            <stop offset="50%" stop-color="#F5E8D0" stop-opacity="0"/>
+            <stop offset="100%" stop-color="#C8B098" stop-opacity="0.65"/>
+          </linearGradient>
+
+          <linearGradient id="ribbonGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#FBF5E5"/>
+            <stop offset="100%" stop-color="#C8B098"/>
+          </linearGradient>
+
+          <!-- Soft shadow filter for depth on lilies -->
+          <filter id="petalShadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="0.6"/>
+            <feOffset dx="0.4" dy="0.8" result="off"/>
+            <feComponentTransfer><feFuncA type="linear" slope="0.4"/></feComponentTransfer>
+            <feMerge>
+              <feMergeNode/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+
+          <!-- ===== PETAL: more refined shape with veining & freckles ===== -->
+          <g id="lilyPetal">
+            <!-- main petal body -->
+            <path d="M 0 0
+                     C -6 -9, -12 -20, -11 -32
+                     C -10 -42, -6 -48, 0 -49
+                     C 6 -48, 10 -42, 11 -32
+                     C 12 -20, 6 -9, 0 0 Z"
+                  fill="url(#petalGrad)" stroke="#D8C5A8" stroke-width="0.35"/>
+
+            <!-- yellow throat at base -->
+            <ellipse cx="0" cy="-4" rx="5" ry="8" fill="url(#petalThroat)"/>
+
+            <!-- pink blush at base -->
+            <ellipse cx="0" cy="-7" rx="4" ry="6" fill="url(#petalBlush)"/>
+
+            <!-- central highlight stripe -->
+            <path d="M 0 -3 C -1.5 -15, -2 -30, -1 -42 L 1 -42 C 2 -30, 1.5 -15, 0 -3 Z"
+                  fill="url(#petalHL)" opacity="0.7"/>
+
+            <!-- center vein -->
+            <path d="M 0 -3 L 0 -45" stroke="#C9A878" stroke-width="0.45" opacity="0.55" stroke-linecap="round"/>
+
+            <!-- subtle side veins -->
+            <path d="M 0 -10 Q -2 -18 -4 -26" stroke="#D8C5A8" stroke-width="0.25" opacity="0.5" fill="none"/>
+            <path d="M 0 -10 Q 2 -18 4 -26" stroke="#D8C5A8" stroke-width="0.25" opacity="0.5" fill="none"/>
+            <path d="M 0 -20 Q -2 -28 -3 -36" stroke="#D8C5A8" stroke-width="0.2" opacity="0.4" fill="none"/>
+            <path d="M 0 -20 Q 2 -28 3 -36" stroke="#D8C5A8" stroke-width="0.2" opacity="0.4" fill="none"/>
+
+            <!-- freckles/spots (signature lily detail) -->
+            <circle cx="-2" cy="-10" r="0.45" fill="#A8744A" opacity="0.7"/>
+            <circle cx="2" cy="-13" r="0.4" fill="#A8744A" opacity="0.7"/>
+            <circle cx="-1.5" cy="-16" r="0.35" fill="#A8744A" opacity="0.65"/>
+            <circle cx="1.5" cy="-8" r="0.35" fill="#A8744A" opacity="0.65"/>
+            <circle cx="0" cy="-19" r="0.3" fill="#A8744A" opacity="0.55"/>
+            <circle cx="-2.5" cy="-22" r="0.3" fill="#A8744A" opacity="0.5"/>
+            <circle cx="2.5" cy="-22" r="0.3" fill="#A8744A" opacity="0.5"/>
+
+            <!-- tip highlight -->
+            <ellipse cx="0" cy="-45" rx="1.8" ry="1.2" fill="#FFFFFF" opacity="0.45"/>
+
+            <!-- petal edge curl shadows -->
+            <path d="M -8 -38 Q -10 -43 -9 -47" stroke="#C8B098" stroke-width="0.35" fill="none" opacity="0.55"/>
+            <path d="M 8 -38 Q 10 -43 9 -47" stroke="#C8B098" stroke-width="0.35" fill="none" opacity="0.55"/>
+          </g>
+
+          <!-- ===== STAMENS with prominent green-tipped pistil ===== -->
+          <g id="lilyStamens">
+            <!-- 6 filaments curving up & outward -->
+            <path d="M 0 -2 C -2 -8, -5 -14, -7 -19" stroke="#E5C890" stroke-width="0.75" fill="none" stroke-linecap="round"/>
+            <path d="M 0 -2 C -1 -10, -2 -18, -3 -23" stroke="#E5C890" stroke-width="0.75" fill="none" stroke-linecap="round"/>
+            <path d="M 0 -2 C 1 -10, 2 -18, 3 -23" stroke="#E5C890" stroke-width="0.75" fill="none" stroke-linecap="round"/>
+            <path d="M 0 -2 C 2 -8, 5 -14, 7 -19" stroke="#E5C890" stroke-width="0.75" fill="none" stroke-linecap="round"/>
+            <path d="M 0 -2 C -3 -6, -6 -10, -9 -14" stroke="#E5C890" stroke-width="0.75" fill="none" stroke-linecap="round"/>
+            <path d="M 0 -2 C 3 -6, 6 -10, 9 -14" stroke="#E5C890" stroke-width="0.75" fill="none" stroke-linecap="round"/>
+
+            <!-- Anthers: orange-brown pollen sacs -->
+            <ellipse cx="-7" cy="-19" rx="1.5" ry="3" fill="url(#anther)" transform="rotate(-25 -7 -19)" stroke="#7A4A20" stroke-width="0.2"/>
+            <ellipse cx="-3" cy="-23" rx="1.5" ry="3.2" fill="url(#anther)" transform="rotate(-8 -3 -23)" stroke="#7A4A20" stroke-width="0.2"/>
+            <ellipse cx="3" cy="-23" rx="1.5" ry="3.2" fill="url(#anther)" transform="rotate(8 3 -23)" stroke="#7A4A20" stroke-width="0.2"/>
+            <ellipse cx="7" cy="-19" rx="1.5" ry="3" fill="url(#anther)" transform="rotate(25 7 -19)" stroke="#7A4A20" stroke-width="0.2"/>
+            <ellipse cx="-9" cy="-14" rx="1.3" ry="2.6" fill="url(#anther)" transform="rotate(-40 -9 -14)" stroke="#7A4A20" stroke-width="0.2"/>
+            <ellipse cx="9" cy="-14" rx="1.3" ry="2.6" fill="url(#anther)" transform="rotate(40 9 -14)" stroke="#7A4A20" stroke-width="0.2"/>
+
+            <!-- Pollen dust around anthers -->
+            <circle cx="-6.5" cy="-18" r="0.5" fill="#FFCC78" opacity="0.85"/>
+            <circle cx="-3" cy="-22" r="0.5" fill="#FFCC78" opacity="0.85"/>
+            <circle cx="3" cy="-22" r="0.5" fill="#FFCC78" opacity="0.85"/>
+            <circle cx="6.5" cy="-18" r="0.5" fill="#FFCC78" opacity="0.85"/>
+            <circle cx="-8.5" cy="-13" r="0.4" fill="#FFCC78" opacity="0.7"/>
+            <circle cx="8.5" cy="-13" r="0.4" fill="#FFCC78" opacity="0.7"/>
+            <circle cx="-1" cy="-25" r="0.35" fill="#FFCC78" opacity="0.6"/>
+            <circle cx="1" cy="-25" r="0.35" fill="#FFCC78" opacity="0.6"/>
+
+            <!-- Central pistil (the signature lily feature) -->
+            <path d="M 0 -2 L 0 -28" stroke="url(#pistilGrad)" stroke-width="1.0" stroke-linecap="round"/>
+            <!-- subtle highlight on pistil -->
+            <line x1="-0.3" y1="-4" x2="-0.3" y2="-26" stroke="#C0D0B0" stroke-width="0.3" opacity="0.7"/>
+
+            <!-- 3-lobed stigma at top -->
+            <g transform="translate(0, -28)">
+              <ellipse cx="-1" cy="0" rx="1.1" ry="1.3" fill="#5A7050"/>
+              <ellipse cx="1" cy="0" rx="1.1" ry="1.3" fill="#5A7050"/>
+              <ellipse cx="0" cy="-1" rx="1.3" ry="1.4" fill="#7A9070"/>
+              <circle cx="0" cy="0.3" r="0.5" fill="#3A5030"/>
+            </g>
+
+            <!-- Ovary base (green nub) -->
+            <ellipse cx="0" cy="-2" rx="2.5" ry="1.8" fill="#A8B89F"/>
+            <ellipse cx="0" cy="-2" rx="1.4" ry="1.2" fill="#7A9070"/>
+            <ellipse cx="-0.5" cy="-2.5" rx="0.6" ry="0.5" fill="#C8D8B8" opacity="0.7"/>
+          </g>
+
+          <!-- ===== BUD ===== -->
+          <g id="lilyBud">
+            <path d="M 0 -2 C -7 -5, -8 -18, -3 -28 C -1 -32, 1 -32, 3 -28 C 8 -18, 7 -5, 0 -2 Z"
+                  fill="url(#budGrad)" stroke="#7A9070" stroke-width="0.3"/>
+            <path d="M -2 -8 C -3 -16, -2 -24, 0 -28 C 0 -22, -1 -14, -2 -8 Z" fill="#FFFAF0" opacity="0.4"/>
+            <path d="M 0 -2 Q 0 -15 0 -27" stroke="#7A9070" stroke-width="0.4" opacity="0.5" fill="none"/>
+            <circle cx="0" cy="-29" r="1.2" fill="#7A9070"/>
+            <!-- subtle vertical seam suggesting petals about to open -->
+            <path d="M -2 -5 Q -3 -18 -2 -26" stroke="#94A38C" stroke-width="0.25" opacity="0.5" fill="none"/>
+            <path d="M 2 -5 Q 3 -18 2 -26" stroke="#94A38C" stroke-width="0.25" opacity="0.5" fill="none"/>
+          </g>
+
+          <!-- ===== LANCE-SHAPED LILY LEAF ===== -->
+          <g id="lilyLeaf">
+            <path d="M 0 0 C -3 -12, -3.5 -28, -1 -42 L 0 -45 L 1 -42 C 3.5 -28, 3 -12, 0 0 Z"
+                  fill="url(#leafGrad)" stroke="#5A7050" stroke-width="0.35"/>
+            <!-- center vein -->
+            <line x1="0" y1="-2" x2="0" y2="-42" stroke="#3A5030" stroke-width="0.4" opacity="0.55" stroke-linecap="round"/>
+            <!-- highlight -->
+            <path d="M -0.5 -5 C -1 -15, -1 -28, -0.5 -38 L 0 -38 L 0 -5 Z" fill="#C8D8B0" opacity="0.4"/>
+          </g>
+
+          <!-- ===== EUCALYPTUS SPRIG ===== -->
+          <g id="eucSprig">
+            <!-- curved stem -->
+            <path d="M 0 0 Q 4 -8 8 -18 Q 11 -28 12 -38 Q 12 -45 11 -50"
+                  stroke="#7A8E70" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+            <!-- alternating round-oval leaves -->
+            <ellipse cx="4" cy="-6" rx="3.5" ry="4.5" fill="url(#eucLeafGrad)" stroke="#7A8E70" stroke-width="0.25" transform="rotate(20 4 -6)"/>
+            <ellipse cx="-2" cy="-14" rx="3.2" ry="4.2" fill="url(#eucLeafGrad)" stroke="#7A8E70" stroke-width="0.25" transform="rotate(-18 -2 -14)"/>
+            <ellipse cx="7" cy="-21" rx="3.3" ry="4.3" fill="url(#eucLeafGrad)" stroke="#7A8E70" stroke-width="0.25" transform="rotate(28 7 -21)"/>
+            <ellipse cx="3" cy="-30" rx="2.8" ry="3.8" fill="url(#eucLeafGrad)" stroke="#7A8E70" stroke-width="0.25" transform="rotate(-5 3 -30)"/>
+            <ellipse cx="10" cy="-37" rx="2.6" ry="3.6" fill="url(#eucLeafGrad)" stroke="#7A8E70" stroke-width="0.25" transform="rotate(15 10 -37)"/>
+            <ellipse cx="8" cy="-46" rx="2.2" ry="3" fill="url(#eucLeafGrad)" stroke="#7A8E70" stroke-width="0.25" transform="rotate(-10 8 -46)"/>
+          </g>
+
+          <!-- ===== BABY'S BREATH SPRIG (cluster on stem) ===== -->
+          <g id="bbSprig">
+            <!-- thin stem -->
+            <path d="M 0 0 Q 1 -8 0 -16 Q -1 -22 0 -28" stroke="#94A38C" stroke-width="0.4" fill="none" opacity="0.6"/>
+            <!-- tiny white flowers -->
+            <circle cx="0" cy="-4" r="1.1" fill="#FFFFFF" stroke="#D8C5A8" stroke-width="0.15"/>
+            <circle cx="-3" cy="-9" r="1" fill="#FFFAF0"/>
+            <circle cx="3" cy="-11" r="1.1" fill="#FFFFFF"/>
+            <circle cx="-2" cy="-16" r="0.9" fill="#FFFAF0"/>
+            <circle cx="2" cy="-19" r="1" fill="#FFFFFF"/>
+            <circle cx="-3" cy="-23" r="0.9" fill="#FFFAF0"/>
+            <circle cx="1" cy="-27" r="0.8" fill="#FFFFFF"/>
+            <circle cx="-1" cy="-30" r="0.7" fill="#FFFAF0"/>
+          </g>
+        </defs>
+
+        <!-- subtle background glow inside the artwork -->
+        <ellipse cx="200" cy="220" rx="170" ry="150" fill="#FFF8F0" opacity="0.25"/>
+
+        <!-- ===== WRAPPING PAPER (more detailed, gathered look) ===== -->
+        <g class="wrap">
+          <!-- back layer (darker, suggesting paper folded behind) -->
+          <path d="M 55 290 L 200 472 L 345 290 L 320 278 L 200 298 L 80 278 Z"
+                fill="#C8B098" opacity="0.85"/>
+
+          <!-- secondary back fold -->
+          <path d="M 70 286 L 200 468 L 330 286 L 308 280 L 200 296 L 92 280 Z"
+                fill="#D5BC9C" opacity="0.6"/>
+
+          <!-- main cone -->
+          <path d="M 78 286 Q 72 282 88 277 L 200 296 L 312 277 Q 328 282 322 286 L 200 464 Z"
+                fill="url(#paperGrad)" stroke="#B8A088" stroke-width="0.5"/>
+
+          <!-- right-side shadow gradient on cone -->
+          <path d="M 200 296 L 322 286 L 200 464 Z" fill="#000" opacity="0.06"/>
+
+          <!-- fold highlight overlay -->
+          <path d="M 78 286 L 200 464 L 322 286 Z" fill="url(#paperFold)" opacity="0.55"/>
+
+          <!-- center fold lines (paper creases) -->
+          <path d="M 200 296 L 200 462" stroke="#B8A088" stroke-width="0.7" opacity="0.6"/>
+          <path d="M 142 310 L 200 462" stroke="#C8B098" stroke-width="0.5" opacity="0.55"/>
+          <path d="M 258 310 L 200 462" stroke="#C8B098" stroke-width="0.5" opacity="0.55"/>
+          <path d="M 110 295 L 200 462" stroke="#C8B098" stroke-width="0.35" opacity="0.45"/>
+          <path d="M 290 295 L 200 462" stroke="#C8B098" stroke-width="0.35" opacity="0.45"/>
+          <path d="M 90 290 L 200 462" stroke="#C8B098" stroke-width="0.25" opacity="0.35"/>
+          <path d="M 310 290 L 200 462" stroke="#C8B098" stroke-width="0.25" opacity="0.35"/>
+
+          <!-- horizontal crinkle bands suggesting paper texture -->
+          <path d="M 88 320 Q 150 330 200 326 Q 250 330 312 320" stroke="#C8B098" stroke-width="0.3" fill="none" opacity="0.3"/>
+          <path d="M 100 360 Q 150 368 200 365 Q 250 368 300 360" stroke="#C8B098" stroke-width="0.25" fill="none" opacity="0.3"/>
+          <path d="M 112 405 Q 155 412 200 410 Q 245 412 288 405" stroke="#C8B098" stroke-width="0.25" fill="none" opacity="0.3"/>
+
+          <!-- gathered/crinkled top edge -->
+          <path d="M 78 286 Q 88 277 95 282 Q 105 273 115 280 Q 125 271 135 278 Q 145 272 155 278 Q 165 270 175 276 Q 185 268 195 274 Q 200 273 200 276"
+                stroke="#FEF7E8" stroke-width="1.1" fill="none" opacity="0.7" stroke-linecap="round"/>
+          <path d="M 200 276 Q 205 273 210 274 Q 215 268 225 274 Q 235 270 245 276 Q 255 272 265 278 Q 275 271 285 278 Q 295 273 305 282 Q 312 277 322 286"
+                stroke="#FEF7E8" stroke-width="1.1" fill="none" opacity="0.7" stroke-linecap="round"/>
+
+          <!-- small crinkle shadows along top edge -->
+          <path d="M 95 282 L 95 290" stroke="#B8A088" stroke-width="0.3" opacity="0.5"/>
+          <path d="M 115 280 L 115 288" stroke="#B8A088" stroke-width="0.3" opacity="0.5"/>
+          <path d="M 135 278 L 135 286" stroke="#B8A088" stroke-width="0.3" opacity="0.5"/>
+          <path d="M 175 276 L 175 284" stroke="#B8A088" stroke-width="0.3" opacity="0.5"/>
+          <path d="M 225 276 L 225 284" stroke="#B8A088" stroke-width="0.3" opacity="0.5"/>
+          <path d="M 265 278 L 265 286" stroke="#B8A088" stroke-width="0.3" opacity="0.5"/>
+          <path d="M 285 278 L 285 286" stroke="#B8A088" stroke-width="0.3" opacity="0.5"/>
+          <path d="M 305 282 L 305 290" stroke="#B8A088" stroke-width="0.3" opacity="0.5"/>
+        </g>
+
+        <!-- ===== TWINE WRAP (natural fiber binding around the cone neck) ===== -->
+        <g class="twine">
+          <ellipse cx="200" cy="350" rx="55" ry="5" fill="none" stroke="#9A7A5A" stroke-width="1.2" opacity="0.85"/>
+          <ellipse cx="200" cy="355" rx="54" ry="5" fill="none" stroke="#B8956A" stroke-width="1" opacity="0.7"/>
+          <ellipse cx="200" cy="360" rx="53" ry="5" fill="none" stroke="#9A7A5A" stroke-width="1.1" opacity="0.8"/>
+          <!-- highlight on twine -->
+          <path d="M 152 350 Q 200 345 248 350" stroke="#D8B888" stroke-width="0.4" fill="none" opacity="0.7"/>
+          <path d="M 154 360 Q 200 355 246 360" stroke="#D8B888" stroke-width="0.4" fill="none" opacity="0.7"/>
+        </g>
+
+        <!-- ===== RIBBON (satin bow over the twine) ===== -->
+        <g class="ribbon">
+          <ellipse cx="200" cy="395" rx="42" ry="7" fill="url(#ribbonGrad)" stroke="#B8A088" stroke-width="0.4"/>
+          <path d="M 200 395 Q 168 376 150 388 Q 146 395 150 402 Q 168 414 200 395 Z"
+                fill="#FBF5E5" stroke="#B8A088" stroke-width="0.5"/>
+          <path d="M 156 392 Q 175 388 195 393" stroke="#C8B098" stroke-width="0.4" fill="none" opacity="0.6"/>
+          <path d="M 158 398 Q 175 400 195 397" stroke="#D8C5A8" stroke-width="0.3" fill="none" opacity="0.5"/>
+          <path d="M 200 395 Q 232 376 250 388 Q 254 395 250 402 Q 232 414 200 395 Z"
+                fill="#FBF5E5" stroke="#B8A088" stroke-width="0.5"/>
+          <path d="M 244 392 Q 225 388 205 393" stroke="#C8B098" stroke-width="0.4" fill="none" opacity="0.6"/>
+          <path d="M 242 398 Q 225 400 205 397" stroke="#D8C5A8" stroke-width="0.3" fill="none" opacity="0.5"/>
+          <ellipse cx="200" cy="395" rx="7.5" ry="9.5" fill="#F0E2C8" stroke="#B8A088" stroke-width="0.4"/>
+          <path d="M 197 392 Q 200 395 197 400" stroke="#C8B098" stroke-width="0.5" fill="none" opacity="0.7"/>
+          <path d="M 203 392 Q 200 395 203 400" stroke="#C8B098" stroke-width="0.5" fill="none" opacity="0.7"/>
+          <!-- ribbon tails -->
+          <path d="M 194 403 Q 188 425 184 444 L 176 442 Q 183 438 182 442 Z"
+                fill="#FBF5E5" stroke="#B8A088" stroke-width="0.4"/>
+          <path d="M 206 403 Q 212 425 216 446 L 224 442 Q 217 440 218 446 Z"
+                fill="#FBF5E5" stroke="#B8A088" stroke-width="0.4"/>
+          <!-- tail highlights -->
+          <path d="M 191 410 Q 187 425 183 440" stroke="#FFFAF0" stroke-width="0.3" fill="none" opacity="0.6"/>
+          <path d="M 209 410 Q 213 425 217 442" stroke="#FFFAF0" stroke-width="0.3" fill="none" opacity="0.6"/>
+        </g>
+
+        <!-- ===== STEMS ===== -->
+        <g class="stems" opacity="0.7">
+          <path d="M 175 290 Q 168 260 162 230" stroke="#94A38C" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+          <path d="M 225 290 Q 232 260 238 230" stroke="#94A38C" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+          <path d="M 200 290 Q 200 255 200 220" stroke="#94A38C" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+          <path d="M 195 290 Q 188 250 175 200" stroke="#A4B89F" stroke-width="1" fill="none" stroke-linecap="round" opacity="0.7"/>
+          <path d="M 205 290 Q 212 250 225 200" stroke="#A4B89F" stroke-width="1" fill="none" stroke-linecap="round" opacity="0.7"/>
+        </g>
+
+        <!-- ===== LEAVES & GREENERY (lily leaves + eucalyptus) ===== -->
+        <g class="greenery">
+          <!-- Eucalyptus sprigs framing the bouquet -->
+          <use href="#eucSprig" transform="translate(70, 245) rotate(-35) scale(0.95)"/>
+          <use href="#eucSprig" transform="translate(330, 245) rotate(35) scale(-0.95, 0.95)"/>
+          <use href="#eucSprig" transform="translate(85, 195) rotate(-55) scale(0.75)"/>
+          <use href="#eucSprig" transform="translate(315, 195) rotate(55) scale(-0.75, 0.75)"/>
+          <use href="#eucSprig" transform="translate(195, 65) rotate(-5) scale(0.6)"/>
+          <use href="#eucSprig" transform="translate(160, 95) rotate(-25) scale(0.55)"/>
+          <use href="#eucSprig" transform="translate(240, 95) rotate(25) scale(-0.55, 0.55)"/>
+
+          <!-- Lance lily leaves peeking from within -->
+          <use href="#lilyLeaf" transform="translate(120, 270) rotate(-15) scale(0.9)"/>
+          <use href="#lilyLeaf" transform="translate(280, 270) rotate(15) scale(0.9)"/>
+          <use href="#lilyLeaf" transform="translate(150, 275) rotate(-25) scale(0.7)"/>
+          <use href="#lilyLeaf" transform="translate(250, 275) rotate(25) scale(0.7)"/>
+          <use href="#lilyLeaf" transform="translate(180, 278) rotate(-8) scale(0.6)"/>
+          <use href="#lilyLeaf" transform="translate(220, 278) rotate(8) scale(0.6)"/>
+          <use href="#lilyLeaf" transform="translate(95, 240) rotate(-45) scale(0.65)"/>
+          <use href="#lilyLeaf" transform="translate(305, 240) rotate(45) scale(0.65)"/>
+        </g>
+
+        <!-- ===== BABY'S BREATH (sprigs with stems + scattered dots) ===== -->
+        <g class="filler">
+          <!-- baby's breath sprigs on outer edges -->
+          <use href="#bbSprig" transform="translate(60, 230) rotate(-25) scale(0.85)"/>
+          <use href="#bbSprig" transform="translate(340, 230) rotate(25) scale(0.85)"/>
+          <use href="#bbSprig" transform="translate(75, 195) rotate(-45) scale(0.7)"/>
+          <use href="#bbSprig" transform="translate(325, 195) rotate(45) scale(0.7)"/>
+          <use href="#bbSprig" transform="translate(110, 175) rotate(-15) scale(0.55)"/>
+          <use href="#bbSprig" transform="translate(290, 175) rotate(15) scale(0.55)"/>
+
+          <!-- scattered tiny dots -->
+          <g opacity="0.85">
+            <circle cx="55" cy="200" r="1.5" fill="#FFFFFF"/>
+            <circle cx="50" cy="215" r="1.1" fill="#FFFAF0"/>
+            <circle cx="60" cy="245" r="1.2" fill="#FFFFFF"/>
+            <circle cx="345" cy="200" r="1.5" fill="#FFFFFF"/>
+            <circle cx="350" cy="215" r="1.1" fill="#FFFAF0"/>
+            <circle cx="340" cy="245" r="1.2" fill="#FFFFFF"/>
+            <circle cx="170" cy="55" r="1" fill="#FFFFFF"/>
+            <circle cx="230" cy="55" r="1" fill="#FFFFFF"/>
+            <circle cx="200" cy="45" r="1" fill="#FFFAF0"/>
+            <circle cx="200" cy="285" r="1.3" fill="#FFFFFF"/>
+            <circle cx="140" cy="285" r="1" fill="#FFFAF0"/>
+            <circle cx="260" cy="285" r="1" fill="#FFFFFF"/>
+            <circle cx="180" cy="280" r="0.9" fill="#FFFAF0"/>
+            <circle cx="220" cy="280" r="0.9" fill="#FFFFFF"/>
+          </g>
+        </g>
+
+        <!-- ===== BUDS (top tips) ===== -->
+        <g class="lily-bloom">
+          <use href="#lilyBud" transform="translate(150, 95) rotate(-18) scale(0.85)"/>
+          <use href="#lilyBud" transform="translate(250, 95) rotate(18) scale(0.85)"/>
+          <use href="#lilyBud" transform="translate(200, 65) scale(0.95)"/>
+          <use href="#lilyBud" transform="translate(175, 80) rotate(-8) scale(0.6)"/>
+          <use href="#lilyBud" transform="translate(225, 80) rotate(8) scale(0.6)"/>
+          <use href="#lilyBud" transform="translate(120, 115) rotate(-30) scale(0.55)"/>
+          <use href="#lilyBud" transform="translate(280, 115) rotate(30) scale(0.55)"/>
+          <use href="#lilyBud" transform="translate(95, 145) rotate(-50) scale(0.45)"/>
+          <use href="#lilyBud" transform="translate(305, 145) rotate(50) scale(0.45)"/>
+        </g>
+
+        <!-- ===== 50 LILY BLOOMS (sorted small→large for natural depth) ===== -->
+        <g class="lily-bloom" transform="translate(102, 246) scale(0.34) rotate(22)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(185, 74) scale(0.34) rotate(-11)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(341, 167) scale(0.35) rotate(-21)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(315, 230) scale(0.36) rotate(-6)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(63, 163) scale(0.37) rotate(13)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(303, 107) scale(0.37) rotate(-14)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(151, 74) scale(0.38) rotate(0)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(331, 203) scale(0.39) rotate(-22)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(156, 272) scale(0.39) rotate(-11)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(74, 123) scale(0.39) rotate(-13)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(241, 275) scale(0.4) rotate(-18)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(178, 284) scale(0.41) rotate(0)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(80, 223) scale(0.43) rotate(-23)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(290, 260) scale(0.44) rotate(-17)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(132, 242) scale(0.46) rotate(-2)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(234, 252) scale(0.47) rotate(-19)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(185, 258) scale(0.47) rotate(-12)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(111, 134) scale(0.47) rotate(-13)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(338, 142) scale(0.47) rotate(-1)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(56, 192) scale(0.48) rotate(9)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(108, 90) scale(0.48) rotate(15)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(228, 70) scale(0.49) rotate(-2)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(290, 88) scale(0.49) rotate(-6)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(260, 241) scale(0.5) rotate(8)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(93, 179) scale(0.5) rotate(19)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(166, 98) scale(0.5) rotate(3)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(304, 144) scale(0.5) rotate(-5)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(313, 181) scale(0.52) rotate(8)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(234, 96) scale(0.52) rotate(5)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(128, 114) scale(0.53) rotate(-11)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(303, 204) scale(0.54) rotate(24)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(98, 211) scale(0.56) rotate(18)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(267, 116) scale(0.58) rotate(13)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(173, 125) scale(0.61) rotate(8)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(276, 173) scale(0.63) rotate(4)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(137, 205) scale(0.64) rotate(3)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(180, 228) scale(0.67) rotate(-10)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(150, 141) scale(0.67) rotate(12)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(256, 208) scale(0.69) rotate(-21)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(261, 144) scale(0.69) rotate(-2)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(227, 223) scale(0.71) rotate(-3)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(123, 175) scale(0.72) rotate(-10)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(226, 124) scale(0.74) rotate(-9)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(222, 199) scale(0.78) rotate(-3)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(220, 153) scale(0.79) rotate(-19)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(186, 198) scale(0.84) rotate(16)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(233, 176) scale(0.86) rotate(-6)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(165, 177) scale(0.87) rotate(22)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(182, 151) scale(0.93) rotate(-22)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+        <g class="lily-bloom" transform="translate(200, 187) scale(1.1) rotate(-3)">
+          <use href="#lilyPetal" transform="rotate(0)"/>
+          <use href="#lilyPetal" transform="rotate(60)"/>
+          <use href="#lilyPetal" transform="rotate(120)"/>
+          <use href="#lilyPetal" transform="rotate(180)"/>
+          <use href="#lilyPetal" transform="rotate(240)"/>
+          <use href="#lilyPetal" transform="rotate(300)"/>
+          <use href="#lilyStamens"/>
+        </g>
+
+      </svg>
+    </div>
+
+    <div class="hero-text">
+      <div class="hero-mark">a little note</div>
+      <p class="hero-message">
+        <span class="greeting">Hey Isha,</span>
+        "Tumhari <em>muskaan</em> hi is e-Bouquet ki sabse <em>khoobsurat</em> flower hai." <span class="tulip">🌷</span>
+      </p>
+      <div class="hero-sub">— curated entirely for one person</div>
+      <div class="hero-name">for isha · only</div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div>crafted with <span class="heart">♡</span> &nbsp;—&nbsp; sirf ek hi muskaan chahiye, bas tumhari</div>
+    <div class="footer-right">— for isha · only —</div>
+  </footer>
+</main>
+
+<script>
+// ========== FLOATING PETALS ==========
+const isMobile = window.innerWidth < 600;
+const petalCount = isMobile ? 12 : 22;
+const petalColors = ['#D88FA6', '#F5D4D9', '#EDDCD2', '#FFF8F0', '#C9A878'];
+for (let i = 0; i < petalCount; i++) {
+  const p = document.createElement('div');
+  p.className = 'petal';
+  const size = 7 + Math.random() * 12;
+  p.style.width = size + 'px';
+  p.style.height = (size * 1.5) + 'px';
+  p.style.background = petalColors[Math.floor(Math.random() * petalColors.length)];
+  p.style.left = Math.random() * 100 + 'vw';
+  p.style.opacity = 0.45 + Math.random() * 0.25;
+  p.style.animationDuration = (14 + Math.random() * 16) + 's';
+  p.style.animationDelay = -Math.random() * 25 + 's';
+  document.body.appendChild(p);
+}
+
+// ========== WELCOME ==========
+const welcome = document.getElementById('welcome');
+const enterBtn = document.getElementById('enterBtn');
+
+enterBtn.addEventListener('click', async () => {
+  try { await Tone.start(); } catch(e) {}
+  welcome.classList.add('hidden');
+  setTimeout(() => { if (!isPlaying) startMusic(); }, 600);
+});
+
+// ========== AMBIENT MUSIC ==========
+let synth, padSynth, reverb, delay, isPlaying = false, loop;
+const musicBtn = document.getElementById('musicBtn');
+const musicLabel = musicBtn.querySelector('.music-label');
+
+function setupAudio() {
+  reverb = new Tone.Reverb({ decay: 9, wet: 0.55 }).toDestination();
+  delay = new Tone.FeedbackDelay({ delayTime: '8n.', feedback: 0.35, wet: 0.25 }).connect(reverb);
+
+  synth = new Tone.PolySynth(Tone.Synth, {
+    oscillator: { type: 'triangle' },
+    envelope: { attack: 0.05, decay: 0.6, sustain: 0.2, release: 3 },
+    volume: -14
+  }).connect(delay);
+
+  padSynth = new Tone.PolySynth(Tone.Synth, {
+    oscillator: { type: 'sine' },
+    envelope: { attack: 2, decay: 1, sustain: 0.7, release: 4 },
+    volume: -22
+  }).connect(reverb);
+}
+
+const melody = [
+  'F4','A4','C5','F5',
+  'E5','C5','A4','G4',
+  'F4','G4','A4','C5',
+  'D5','C5','A4','F4',
+  null,'A4','C5','E5',
+  'F5','E5','D5','C5',
+  'A4','G4','F4','A4',
+  null,'C5','A4','F4'
+];
+
+const padChords = [
+  ['F3','A3','C4'],
+  ['D3','F3','A3'],
+  ['Bb2','D3','F3'],
+  ['C3','E3','G3']
+];
+
+function startMusic() {
+  if (!synth) setupAudio();
+  let i = 0, chordIdx = 0;
+  Tone.Transport.bpm.value = 58;
+
+  loop = new Tone.Loop((time) => {
+    const note = melody[i % melody.length];
+    if (note) {
+      synth.triggerAttackRelease(note, '2n', time, 0.6 + Math.random() * 0.2);
+    }
+    if (i % 8 === 0) {
+      padSynth.triggerAttackRelease(padChords[chordIdx % padChords.length], '1m', time, 0.5);
+      chordIdx++;
+    }
+    i++;
+  }, '4n').start(0);
+
+  Tone.Transport.start();
+  isPlaying = true;
+  musicBtn.classList.add('playing');
+  musicLabel.textContent = 'pause music';
+}
+
+function pauseMusic() {
+  Tone.Transport.pause();
+  isPlaying = false;
+  musicBtn.classList.remove('playing');
+  musicLabel.textContent = 'play ambient';
+}
+
+musicBtn.addEventListener('click', async () => {
+  try { await Tone.start(); } catch(e) {}
+  if (!isPlaying) {
+    if (Tone.Transport.state === 'paused') {
+      Tone.Transport.start();
+      isPlaying = true;
+      musicBtn.classList.add('playing');
+      musicLabel.textContent = 'pause music';
+    } else {
+      startMusic();
+    }
+  } else {
+    pauseMusic();
+  }
+});
+</script>
+</body>
+</html>
