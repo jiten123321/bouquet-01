@@ -1707,12 +1707,15 @@ const lyricEl    = document.getElementById('lyric');
 audio.volume = 0.75;
 
 // ========== BOUQUET DANCE (audio-reactive, with gentle fallback sway) ==========
-// Collect every flower group and remember its base SVG transform — we append
-// an extra rotate()/scale() each frame instead of replacing the attribute.
-const flowers = Array.from(document.querySelectorAll('.hero-art .lily-bloom'))
+// Collect every flower group that carries its own positioning transform —
+// we append an extra rotate()/scale() each frame instead of replacing it.
+// The buds container <g class="lily-bloom"> has no transform of its own
+// (its children are individually positioned), so we skip it — otherwise
+// it would pivot around the SVG origin and visibly drift sideways.
+const flowers = Array.from(document.querySelectorAll('.hero-art .lily-bloom[transform]'))
   .map((el, i) => ({
     el,
-    base: el.getAttribute('transform') || '',
+    base: el.getAttribute('transform'),
     seed: Math.random() * Math.PI * 2,
     speed: 0.4 + Math.random() * 0.6,
     band: i % 3, // 0 = bass, 1 = mid, 2 = treble
