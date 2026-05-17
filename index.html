@@ -693,7 +693,7 @@ body::before {
     <p class="sub">Yeh choti si jagah, sirf tumhare naam.</p>
     <button class="welcome-btn" id="enterBtn">Step Inside</button>
   </div>
-  <div class="welcome-hint">tap to step inside ✿ music begins inside</div>
+  <div class="welcome-hint">tap to step inside ✿ unmute your phone for the song</div>
 </div>
 
 <!-- ============== MAIN ============== -->
@@ -1646,40 +1646,38 @@ for (let i = 0; i < petalCount; i++) {
 const welcome = document.getElementById('welcome');
 const enterBtn = document.getElementById('enterBtn');
 
-enterBtn.addEventListener('click', () => {
-  welcome.classList.add('hidden');
-  playSong();
-});
-
 // ========== SONG PLAYBACK ==========
 const musicBtn = document.getElementById('musicBtn');
 const musicLabel = musicBtn.querySelector('.music-label');
 const audio = document.getElementById('songAudio');
 audio.volume = 0.75;
 
+// Mobile (iOS especially) requires audio.play() to be called SYNCHRONOUSLY
+// inside the user-gesture handler. Don't await canplay first — just call
+// play() and let the browser queue playback once it has enough data.
 function playSong() {
-  const tryPlay = () => {
-    const p = audio.play();
-    if (p && typeof p.then === 'function') {
-      p.catch(() => {
-        // Autoplay blocked — wait for the user to tap the button
-        musicBtn.classList.remove('playing');
-        musicLabel.textContent = 'play song';
-      });
-    }
-  };
-  if (audio.readyState >= 2) tryPlay();
-  else audio.addEventListener('canplay', tryPlay, { once: true });
+  const p = audio.play();
+  if (p && typeof p.then === 'function') {
+    p.catch(() => {
+      musicBtn.classList.remove('playing');
+      musicLabel.textContent = 'tap to play';
+    });
+  }
 }
 
 function pauseSong() {
   audio.pause();
-  musicBtn.classList.remove('playing');
-  musicLabel.textContent = 'play song';
 }
 
-audio.addEventListener('play',  () => { musicBtn.classList.add('playing');    musicLabel.textContent = 'pause song'; });
-audio.addEventListener('pause', () => { musicBtn.classList.remove('playing'); musicLabel.textContent = 'play song';  });
+audio.addEventListener('play',    () => { musicBtn.classList.add('playing');    musicLabel.textContent = 'pause song'; });
+audio.addEventListener('pause',   () => { musicBtn.classList.remove('playing'); musicLabel.textContent = 'play song';  });
+audio.addEventListener('playing', () => { musicBtn.classList.add('playing');    musicLabel.textContent = 'pause song'; });
+
+enterBtn.addEventListener('click', () => {
+  welcome.classList.add('hidden');
+  // Call play() synchronously in the gesture so iOS allows it
+  playSong();
+});
 
 musicBtn.addEventListener('click', () => {
   if (audio.paused) playSong(); else pauseSong();
