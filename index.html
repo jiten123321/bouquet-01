@@ -435,64 +435,6 @@ body::before {
 
 .music-label { position: relative; z-index: 1; color: var(--ink); }
 
-/* ===== Karaoke lyric line next to the music button ===== */
-.lyric-display {
-  --glow: 0;
-  max-width: 26rem;
-  font-family: 'Fraunces', serif;
-  font-style: italic;
-  font-size: 1rem;
-  color: var(--rose-deep);
-  opacity: 0;
-  transform: translateY(6px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  pointer-events: none;
-  letter-spacing: 0.005em;
-  text-shadow:
-    0 1px 0 rgba(255,255,255,0.55),
-    0 0 calc(8px + var(--glow) * 22px) rgba(216,143,166, calc(0.15 + var(--glow) * 0.5));
-}
-.lyric-display.visible { opacity: 0.95; transform: translateY(0); }
-.lyric-display::before {
-  content: '♪';
-  color: var(--gold);
-  font-style: normal;
-  margin-right: 0.45rem;
-  display: inline-block;
-  animation: lyricNote 1.6s ease-in-out infinite;
-}
-@keyframes lyricNote {
-  0%, 100% { transform: translateY(0)   rotate(-4deg); opacity: 0.8; }
-  50%      { transform: translateY(-2px) rotate( 6deg); opacity: 1;   }
-}
-
-/* Per-word reveal */
-.lyric-display .lw {
-  display: inline-block;
-  opacity: 0;
-  transform: translateY(8px);
-  filter: blur(2px);
-  animation: lwReveal 0.55s cubic-bezier(0.34, 1.4, 0.64, 1) forwards;
-}
-@keyframes lwReveal {
-  to { opacity: 1; transform: translateY(0); filter: blur(0); }
-}
-
-/* Mood variants — color/weight by line type */
-.lyric-display.mood-punjabi { color: var(--gold-deep); font-weight: 500; }
-.lyric-display.mood-punjabi { text-shadow:
-    0 1px 0 rgba(255,255,255,0.55),
-    0 0 calc(8px + var(--glow) * 22px) rgba(201,168,120, calc(0.2 + var(--glow) * 0.55)); }
-.lyric-display.mood-hook    { color: var(--rose-deep); font-weight: 500; letter-spacing: 0.04em; }
-.lyric-display.mood-instr   { color: var(--ink-soft); opacity: 0.7; font-size: 0.85rem; }
-
-@media (max-width: 900px) { .lyric-display { max-width: 16rem; font-size: 0.85rem; } }
-@media (max-width: 600px) { .lyric-display { max-width: 10rem; font-size: 0.72rem; } }
-@media (max-width: 360px) { .lyric-display { display: none; } }
-
 /* ============== HERO ============== */
 .hero {
   display: grid;
@@ -921,7 +863,6 @@ body::before {
 
   <header class="top-bar">
     <div class="top-actions">
-      <div class="lyric-display" id="lyric" aria-live="polite"></div>
       <button class="music-toggle" id="musicBtn" aria-label="Toggle music">
         <span class="vinyl-stack" aria-hidden="true">
           <span class="vinyl">
@@ -1834,7 +1775,6 @@ const enterBtn   = document.getElementById('enterBtn');
 const musicBtn   = document.getElementById('musicBtn');
 const musicLabel = musicBtn.querySelector('.music-label');
 const audio      = document.getElementById('songAudio');
-const lyricEl    = document.getElementById('lyric');
 audio.volume = 0.75;
 
 // ========== BOUQUET DANCE (audio-reactive, with gentle fallback sway) ==========
@@ -1912,77 +1852,9 @@ function tick() {
       `${f.base} rotate(${(idle + beat).toFixed(2)}) scale(${scale.toFixed(3)})`
     );
   }
-  // Beat-driven glow on the lyric text — bass drives the shadow intensity
-  if (lyricEl) lyricEl.style.setProperty('--glow', bassS.toFixed(3));
   requestAnimationFrame(tick);
 }
 if (!prefersReduced) requestAnimationFrame(tick);
-
-// ========== LYRICS ENGINE ==========
-// Each entry: { t, text, mood?, end? }
-//   t     = start time (seconds into the song)
-//   text  = the line to display (≤ ~6 short words reads best)
-//   mood  = 'eng' (default) | 'punjabi' | 'hook' | 'instr'
-//   end   = optional explicit fade-out time; defaults to next entry's t - 0.4s
-//
-// Edit this array to fit your copy of the track. Below is just the
-// scaffolding: timestamps mark each structural section of the song with
-// the publicly-known hooks already in place. Paste your own line text
-// into the placeholder slots and tweak `t` until it lines up with what
-// you hear (use the keyboard arrows to scrub while editing).
-const lyrics = [
-  // Track: "Teri Hasi" — Dibya Prasad
-  // Fill in your own timed lines below; the engine handles the rest.
-  { t:   1, mood: 'instr', text: '✦  Teri Hasi  ✦' },
-  { t:   6, mood: 'instr', text: '— Dibya Prasad —' },
-  // { t:  XX, text: 'your line here' },
-  // { t:  XX, mood: 'hook', text: 'short hook' },
-  // …add as many { t, text } entries as you like
-];
-
-// Sort + precompute fade-out times so transitions are clean.
-lyrics.sort((a, b) => a.t - b.t);
-for (let i = 0; i < lyrics.length; i++) {
-  const next = lyrics[i + 1];
-  lyrics[i].endT = lyrics[i].end ?? (next ? next.t - 0.4 : lyrics[i].t + 6);
-}
-
-let activeLyricIdx = -2;
-function showLyric(entry) {
-  lyricEl.className = 'lyric-display mood-' + (entry.mood || 'eng');
-  lyricEl.innerHTML = '';
-  // word-by-word reveal — each word fades + slides in
-  const words = String(entry.text).split(/(\s+)/);
-  let wi = 0;
-  for (const w of words) {
-    if (!w.trim()) { lyricEl.appendChild(document.createTextNode(w)); continue; }
-    const span = document.createElement('span');
-    span.className = 'lw';
-    span.textContent = w;
-    span.style.animationDelay = (wi++ * 0.07) + 's';
-    lyricEl.appendChild(span);
-  }
-  // next frame to let the new content settle, then trigger the fade-in
-  requestAnimationFrame(() => lyricEl.classList.add('visible'));
-}
-function hideLyric() { lyricEl.classList.remove('visible'); }
-
-function updateLyric() {
-  if (!lyricEl) return;
-  const t = audio.currentTime;
-  // active entry: largest i with lyrics[i].t <= t < lyrics[i].endT
-  let idx = -1;
-  for (let i = 0; i < lyrics.length; i++) {
-    if (lyrics[i].t <= t && t < lyrics[i].endT) { idx = i; break; }
-  }
-  if (idx === activeLyricIdx) return;
-  activeLyricIdx = idx;
-  if (idx >= 0 && String(lyrics[idx].text).trim()) showLyric(lyrics[idx]);
-  else hideLyric();
-}
-audio.addEventListener('timeupdate', updateLyric);
-audio.addEventListener('seeking',   () => { activeLyricIdx = -2; updateLyric(); });
-audio.addEventListener('pause', () => lyricEl && lyricEl.classList.remove('visible'));
 
 // ========== WELCOME GLITTER RAIN ==========
 (function spawnGlitter() {
