@@ -269,10 +269,10 @@ body::before {
 }
 
 .music-toggle {
-  background: linear-gradient(135deg, rgba(255,248,240,0.6), rgba(245,212,217,0.4));
-  border: 1px solid rgba(184,108,130,0.45);
+  background: transparent;
+  border: none;
   color: var(--ink);
-  padding: 0.5rem 1.1rem 0.5rem 0.85rem;
+  padding: 0.2rem 0.95rem 0.2rem 0.25rem;
   border-radius: 999px;
   font-family: 'Fraunces', serif;
   font-style: italic;
@@ -280,91 +280,160 @@ body::before {
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 0.55rem;
-  transition: all 0.45s cubic-bezier(0.34, 1.4, 0.64, 1);
+  gap: 0.6rem;
+  transition: transform 0.35s cubic-bezier(0.34, 1.4, 0.64, 1), filter 0.3s;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
-  box-shadow: 0 2px 8px rgba(184,108,130,0.12), inset 0 1px 0 rgba(255,255,255,0.55);
   position: relative;
+}
+
+.music-toggle:hover { transform: scale(1.04); }
+.music-toggle:active { transform: scale(0.97); }
+
+/* ===== Vinyl record (always spinning) ===== */
+.vinyl-stack {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  filter: drop-shadow(0 3px 6px rgba(58,31,43,0.35));
+  transition: filter 0.4s;
+}
+
+.vinyl {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 32% 28%, #3A1F2B 0%, #1A0A14 55%, #050208 100%);
+  box-shadow:
+    inset 0 0 0 0.5px rgba(255,255,255,0.08),
+    inset 0 0 10px rgba(0,0,0,0.65);
   overflow: hidden;
+  animation: vinylSpin 3.6s linear infinite;
+  will-change: transform;
 }
 
-.music-toggle:hover {
-  background: linear-gradient(135deg, var(--rose-deep), #9A5570);
-  color: var(--cream);
-  border-color: var(--rose-deep);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(184,108,130,0.35);
-}
-
-.music-toggle::before {
+/* grooves: alternating subtle rings */
+.vinyl::before {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.5), transparent 60%);
+  background:
+    repeating-radial-gradient(circle at center,
+      rgba(255,255,255,0.045) 0 0.6px,
+      transparent 0.6px 2.4px),
+    radial-gradient(circle at 36% 30%, rgba(255,255,255,0.16), transparent 55%);
   pointer-events: none;
-  opacity: 0.7;
 }
 
-.music-toggle.playing {
-  background: linear-gradient(135deg, var(--rose-deep), #9A5570);
-  color: var(--cream);
-  border-color: var(--rose-deep);
-  box-shadow: 0 4px 14px rgba(184,108,130,0.35), 0 0 0 4px rgba(216,143,166,0.18);
-  animation: btnGlow 2.4s ease-in-out infinite;
+/* center label */
+.vinyl::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 38%; height: 38%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 30%, #F5D4D9 0%, #D88FA6 35%, #B86C82 75%, #6A3E50 100%);
+  box-shadow:
+    inset 0 0 0 0.5px rgba(255,255,255,0.35),
+    0 0 2px rgba(0,0,0,0.4);
 }
 
-@keyframes btnGlow {
-  0%, 100% { box-shadow: 0 4px 14px rgba(184,108,130,0.35), 0 0 0 4px rgba(216,143,166,0.18); }
-  50%      { box-shadow: 0 6px 18px rgba(184,108,130,0.5),  0 0 0 7px rgba(216,143,166,0.12); }
+/* center hole — sits on top of the label */
+.vinyl-hole {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 7%; height: 7%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: #050208;
+  box-shadow: inset 0 0 0 0.5px rgba(255,255,255,0.2);
+  z-index: 2;
 }
 
-/* ===== Animated equalizer icon ===== */
-.eq {
-  display: inline-flex;
-  align-items: flex-end;
-  justify-content: center;
-  gap: 2.5px;
-  width: 18px;
-  height: 16px;
-  position: relative;
-  z-index: 1;
+@keyframes vinylSpin {
+  to { transform: rotate(360deg); }
 }
 
-.eq span {
-  display: block;
-  width: 2.5px;
-  height: 30%;
-  background: currentColor;
-  border-radius: 2px;
-  transform-origin: bottom center;
-  transition: height 0.3s ease;
+/* ===== Tonearm (lifts on pause, drops on play) ===== */
+.tonearm {
+  position: absolute;
+  top: -3px;
+  right: -6px;
+  width: 30px;
+  height: 30px;
+  z-index: 5;
+  pointer-events: none;
 }
 
-.music-toggle.playing .eq span {
-  animation: eqDance 0.95s ease-in-out infinite;
+.tonearm-pivot {
+  position: absolute;
+  top: 0; right: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #E8D5B5, #6A5A4A 80%);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.4), inset 0 0 0 0.5px rgba(0,0,0,0.3);
+  z-index: 2;
 }
 
-.music-toggle.playing .eq span:nth-child(1) { animation-delay: -0.20s; }
-.music-toggle.playing .eq span:nth-child(2) { animation-delay: -0.55s; }
-.music-toggle.playing .eq span:nth-child(3) { animation-delay: -0.05s; }
-.music-toggle.playing .eq span:nth-child(4) { animation-delay: -0.40s; }
-
-@keyframes eqDance {
-  0%, 100% { height: 22%; }
-  25%      { height: 90%; }
-  50%      { height: 45%; }
-  75%      { height: 75%; }
+.tonearm-arm {
+  position: absolute;
+  top: 3.6px;
+  right: 4px;
+  width: 25px;
+  height: 1.8px;
+  background: linear-gradient(90deg, #5A4A3A 0%, #C8B498 50%, #5A4A3A 100%);
+  border-radius: 1px;
+  transform-origin: right center;
+  transform: rotate(-58deg); /* paused: lifted away from the disc */
+  transition: transform 0.65s cubic-bezier(0.34, 1.4, 0.64, 1);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.35);
 }
 
-/* paused state: tiny triangular "play" hint */
-.music-toggle:not(.playing) .eq span:nth-child(1) { height: 28%; }
-.music-toggle:not(.playing) .eq span:nth-child(2) { height: 52%; }
-.music-toggle:not(.playing) .eq span:nth-child(3) { height: 72%; }
-.music-toggle:not(.playing) .eq span:nth-child(4) { height: 88%; }
+.tonearm-arm::after {
+  /* tonearm head/needle */
+  content: '';
+  position: absolute;
+  left: -2px;
+  top: -1.6px;
+  width: 5px;
+  height: 5px;
+  border-radius: 30% 30% 50% 50%;
+  background: linear-gradient(135deg, #4A3A2A, #2A1A0A);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
 
-.music-label { position: relative; z-index: 1; }
+.music-toggle.playing .tonearm-arm {
+  transform: rotate(-28deg); /* lowered onto the groove */
+}
+
+/* gentle halo glow while playing */
+.music-toggle.playing .vinyl-stack {
+  filter:
+    drop-shadow(0 3px 6px rgba(58,31,43,0.35))
+    drop-shadow(0 0 6px rgba(216,143,166,0.6));
+  animation: vinylHalo 2.6s ease-in-out infinite;
+}
+
+.music-toggle:not(.playing) .vinyl-stack {
+  filter: drop-shadow(0 3px 6px rgba(58,31,43,0.35)) saturate(0.55) brightness(0.85);
+}
+
+@keyframes vinylHalo {
+  0%, 100% { filter: drop-shadow(0 3px 6px rgba(58,31,43,0.35)) drop-shadow(0 0 6px rgba(216,143,166,0.45)); }
+  50%      { filter: drop-shadow(0 3px 6px rgba(58,31,43,0.35)) drop-shadow(0 0 12px rgba(216,143,166,0.75)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vinyl { animation: none; }
+  .music-toggle.playing .vinyl-stack { animation: none; }
+}
+
+.music-label { position: relative; z-index: 1; color: var(--ink); }
 
 /* ===== Karaoke lyric line next to the music button ===== */
 .lyric-display {
@@ -704,10 +773,13 @@ body::before {
   .brand-orn { font-size: 0.85em; }
   .top-actions { gap: 0.8rem; }
   .music-toggle {
-    padding: 0.45rem 0.85rem;
+    padding: 0.15rem 0.75rem 0.15rem 0.15rem;
     font-size: 0.78rem;
     gap: 0.45rem;
   }
+  .vinyl-stack { width: 38px; height: 38px; }
+  .tonearm { width: 26px; height: 26px; }
+  .tonearm-arm { width: 22px; }
   .date-stamp.left {
     font-size: 0.58rem;
     letter-spacing: 0.2em;
@@ -775,7 +847,7 @@ body::before {
 
 /* Tiny phones (iPhone SE etc.) */
 @media (max-width: 360px) {
-  .music-toggle { padding: 0.4rem 0.7rem; font-size: 0.72rem; }
+  .music-toggle { padding: 0.1rem; font-size: 0.72rem; gap: 0; }
   .music-label { display: none; }
   .date-stamp.left { font-size: 0.52rem; letter-spacing: 0.18em; padding-left: 14px; }
   .date-stamp.left::before { width: 8px; }
@@ -851,13 +923,19 @@ body::before {
     <div class="top-actions">
       <div class="lyric-display" id="lyric" aria-live="polite"></div>
       <button class="music-toggle" id="musicBtn" aria-label="Toggle music">
-        <span class="eq" aria-hidden="true">
-          <span></span><span></span><span></span><span></span>
+        <span class="vinyl-stack" aria-hidden="true">
+          <span class="vinyl">
+            <span class="vinyl-hole"></span>
+          </span>
+          <span class="tonearm">
+            <span class="tonearm-pivot"></span>
+            <span class="tonearm-arm"></span>
+          </span>
         </span>
         <span class="music-label">play song</span>
       </button>
       <audio id="songAudio" preload="auto" loop playsinline crossorigin="anonymous"
-             src="https://raw.githubusercontent.com/jiten123321/song/main/Ed-Sheeran-Sapphire-%28MeDotSongs.com%29.mp3"></audio>
+             src="https://raw.githubusercontent.com/jiten123321/song/main/Teri%20Hasi%20Dibya%20Prasad%20%28pagalall.com%29.mp3"></audio>
     </div>
   </header>
 
@@ -1853,57 +1931,13 @@ if (!prefersReduced) requestAnimationFrame(tick);
 // into the placeholder slots and tweak `t` until it lines up with what
 // you hear (use the keyboard arrows to scrub while editing).
 const lyrics = [
-  // --- intro / verse 1 ---
-  { t:   2, mood: 'instr', text: '✦  Sapphire  ✦' },
-  { t:  14, text: '…' },          // ← paste line
-  { t:  20, text: '…' },          // ← paste line
-  { t:  26, text: '…' },          // ← paste line
-  { t:  32, text: '…' },          // ← paste line
-  // --- pre-chorus ---
-  { t:  38, text: '…' },          // ← paste line
-  { t:  43, text: '…' },          // ← paste line
-  { t:  48, mood: 'hook', text: 'Sapphire' },
-  // --- chorus 1 ---
-  { t:  52, text: '…' },          // ← paste line
-  { t:  56, text: '…' },          // ← paste line
-  { t:  60, text: '…' },          // ← paste line
-  { t:  64, text: '…' },          // ← paste line
-  { t:  68, mood: 'punjabi', text: 'Cham cham chamke sitare vargi' },
-  { t:  73, mood: 'hook',    text: '(Sapphire)' },
-  // --- chorus repeat ---
-  { t:  77, text: '…' },          // ← paste line
-  { t:  81, text: '…' },          // ← paste line
-  { t:  85, text: '…' },          // ← paste line
-  { t:  89, mood: 'punjabi', text: 'Cham cham chamke sitare vargi' },
-  // --- verse 2 ---
-  { t:  96, text: '…' },          // ← paste line
-  { t: 104, text: '…' },          // ← paste line
-  { t: 112, text: '…' },          // ← paste line
-  { t: 120, text: '…' },          // ← paste line
-  // --- pre-chorus + chorus 2 ---
-  { t: 128, text: '…' },          // ← paste line
-  { t: 134, mood: 'hook', text: 'Sapphire' },
-  { t: 140, text: '…' },          // ← paste line
-  { t: 148, mood: 'punjabi', text: 'Cham cham chamke sitare vargi' },
-  { t: 156, text: '…' },          // ← paste line
-  { t: 164, mood: 'punjabi', text: 'Cham cham chamke sitare vargi' },
-  // --- Punjabi bridge (Arijit Singh) ---
-  { t: 172, mood: 'instr', text: '— Arijit Singh —' },
-  { t: 178, mood: 'punjabi', text: '…' }, // ← paste line
-  { t: 184, mood: 'punjabi', text: '…' }, // ← paste line
-  { t: 190, mood: 'punjabi', text: '…' }, // ← paste line
-  { t: 196, mood: 'punjabi', text: '…' }, // ← paste line
-  { t: 202, mood: 'hook',    text: 'Sapphire' },
-  { t: 208, mood: 'punjabi', text: 'Cham cham chamke sitare vargi' },
-  // --- final choruses ---
-  { t: 216, text: '…' },          // ← paste line
-  { t: 222, mood: 'punjabi', text: 'Cham cham chamke sitare vargi' },
-  { t: 230, text: '…' },          // ← paste line
-  { t: 236, mood: 'punjabi', text: 'Cham cham chamke sitare vargi' },
-  // --- outro pre-chorus ---
-  { t: 244, text: '…' },          // ← paste line
-  { t: 250, text: '…' },          // ← paste line
-  { t: 256, mood: 'hook', text: 'Sapphire' },
+  // Track: "Teri Hasi" — Dibya Prasad
+  // Fill in your own timed lines below; the engine handles the rest.
+  { t:   1, mood: 'instr', text: '✦  Teri Hasi  ✦' },
+  { t:   6, mood: 'instr', text: '— Dibya Prasad —' },
+  // { t:  XX, text: 'your line here' },
+  // { t:  XX, mood: 'hook', text: 'short hook' },
+  // …add as many { t, text } entries as you like
 ];
 
 // Sort + precompute fade-out times so transitions are clean.
